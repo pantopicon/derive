@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dérive Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen bg-gradient-to-br from-zinc-900 via-gray-900 to-black text-white p-6 flex flex-col">
+        <div class="max-w-2xl mx-auto w-full flex-1 flex flex-col">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center gap-3 mb-3">
+                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                        <polygon points="12,6 12,12 16,14" fill="currentColor"/>
+                    </svg>
+                    <h1 class="text-3xl font-light tracking-wide">Dérive Generator</h1>
+                </div>
+                <p class="text-gray-500 text-sm italic">
+                    Psychogeographic walking instructions for the urban explorer
+                </p>
+            </div>
+
+            <!-- Main Instruction Card -->
+            <div class="bg-gray-800/50 backdrop-blur rounded-2xl p-8 mb-6 border border-gray-700/50 shadow-2xl flex-1 flex flex-col justify-center">
+                <div class="text-center">
+                    <p id="instruction" class="text-2xl md:text-3xl font-light leading-relaxed mb-8 text-gray-100">
+                        Turn left at the next intersection
+                    </p>
+                    <button
+                        id="newInstruction"
+                        class="bg-white hover:bg-gray-200 text-black font-medium px-8 py-4 rounded-full transition-all transform hover:scale-105 active:scale-95 flex items-center gap-3 mx-auto shadow-lg cursor-pointer"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        New Instruction
+                    </button>
+                </div>
+            </div>
+
+            <!-- History -->
+            <div id="historySection" class="bg-gray-800/30 backdrop-blur rounded-xl p-6 border border-gray-700/30" style="display: none;">
+                <h2 class="text-sm uppercase tracking-wider text-gray-500 mb-4 font-medium">
+                    Recent Path
+                </h2>
+                <div id="history" class="space-y-2"></div>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center mt-8 text-gray-600 text-xs">
+                <p>Inspired by the Situationist International</p>
+                <p class="mt-1">Let the city guide your wandering</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const instructions = [
+            "Turn left at the next intersection",
+            "Follow the sound of water",
+            "Walk toward the tallest building you can see",
+            "Turn right at the next street with trees",
+            "Follow the color red wherever it leads",
+            "Walk in the direction of the most interesting smell",
+            "Take the path with the most shadows",
+            "Turn toward the oldest-looking structure",
+            "Follow any curve in the road",
+            "Walk toward where you hear voices",
+            "Turn at the next bookstore, café, or shop window that catches your eye",
+            "Follow the street that slopes downward",
+            "Walk toward the brightest color you see",
+            "Turn where you see birds gathering",
+            "Follow the flow of pedestrian traffic",
+            "Walk against the flow of pedestrian traffic",
+            "Turn at the next place with music",
+            "Follow the warmest sunlight",
+            "Walk toward the most interesting architectural detail",
+            "Turn at the next garden or greenery",
+            "Follow the widest street",
+            "Follow the narrowest alley",
+            "Walk toward the sound of construction",
+            "Turn at the next mural or street art",
+            "Follow a stranger for one block (respectfully)",
+            "Walk toward the smell of food",
+            "Turn where you see graffiti",
+            "Follow the most worn path",
+            "Walk toward the quietest direction",
+            "Turn at the next clock you see",
+            "Follow any blue you notice",
+            "Walk toward the newest-looking building",
+            "Turn where cobblestones or old pavement appear",
+            "Follow the direction of flowing water (gutters count)",
+            "Walk toward any reflected light",
+            "Turn at the next place selling flowers",
+            "Follow the street with the most languages on signs",
+            "Walk where the sidewalk changes texture",
+            "Turn toward any pattern that repeats three times",
+            "Follow your shadow",
+            "Walk perpendicular to your shadow",
+            "Turn at the next bookshop or library",
+            "Follow the scent of coffee or bread",
+            "Walk toward the sound of children playing",
+            "Turn where street names change",
+            "Follow the most interesting door",
+            "Walk toward any structure that confuses you",
+            "Turn at the next place of worship",
+            "Follow the path with the most benches"
+        ];
+
+        let history = [];
+        
+        const instructionEl = document.getElementById('instruction');
+        const historyEl = document.getElementById('history');
+        const historySectionEl = document.getElementById('historySection');
+        const button = document.getElementById('newInstruction');
+
+        function getRandomInstruction() {
+            return instructions[Math.floor(Math.random() * instructions.length)];
+        }
+
+        function updateHistory() {
+            if (history.length === 0) {
+                historySectionEl.style.display = 'none';
+                return;
+            }
+            
+            historySectionEl.style.display = 'block';
+            historyEl.innerHTML = history.map((inst, index) => `
+                <div class="text-gray-400 text-sm py-2 px-3 bg-gray-700/20 rounded-lg" style="opacity: ${1 - (index * 0.1)}">
+                    ${inst}
+                </div>
+            `).join('');
+        }
+
+        function generateNewInstruction() {
+            const newInstruction = getRandomInstruction();
+            instructionEl.textContent = newInstruction;
+            history = [newInstruction, ...history].slice(0, 10);
+            updateHistory();
+        }
+
+        button.addEventListener('click', generateNewInstruction);
+
+        // Initialize with a random instruction
+        instructionEl.textContent = getRandomInstruction();
+    </script>
+</body>
+</html>
